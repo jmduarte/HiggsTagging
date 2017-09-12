@@ -37,19 +37,19 @@ if not train.modelSet():
 
     train.setModel(dense_model)
     
-    train.compileModel(learningrate=0.0001,
+    train.compileModel(learningrate=0.000001,
                        loss=['categorical_crossentropy'],
                        metrics=['accuracy'])
     
 
 model,history,callbacks = train.trainModel(nepochs=10, 
-                                 batchsize=128, 
+                                 batchsize=32, 
                                  stop_patience=10, 
                                  lr_factor=0.5, 
                                  lr_patience=10, 
-                                 lr_epsilon=0.0001, 
+                                 lr_epsilon=0.0000001, 
                                  lr_cooldown=2, 
-                                 lr_minimum=0.0001, 
+                                 lr_minimum=0.0000001, 
                                  maxqsize=100)
 
 

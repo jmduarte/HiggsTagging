@@ -597,7 +597,7 @@ class DataCollection(object):
         td=dataclass
         out=[]
         firstcall=True
-        for sample in self.samples:
+        for sample in self.samples[:2]: # remove [:2] this is just a hack because it doesn't fit in memory in small t2 instance!
             td.readIn(self.getSamplePath(sample))
             #make this generic
             thislist=[]
