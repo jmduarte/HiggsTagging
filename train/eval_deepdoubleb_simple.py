@@ -184,6 +184,9 @@ for key, val in myListOfDicts[0].iteritems():
 for i, myDict in enumerate(myListOfDicts):
     for key, val in myDict.iteritems():
         myDictOfLists[key].append(myDict[key])
+
+
+plt.figure()
 val_loss = np.asarray(myDictOfLists['val_loss'])
 loss = np.asarray(myDictOfLists['loss'])
 plt.plot(val_loss, label='validation')

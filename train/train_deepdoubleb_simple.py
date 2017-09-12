@@ -29,7 +29,7 @@ args.inputDataCollection = '/cms-sc17/convert_deepDoubleB_simple_train_val/dataC
 args.outputDir = 'train_deep_simple/'
 
 #also does all the parsing
-train=training_base(testrun=True,args=args)
+train=training_base(testrun=False,args=args)
 
 
 if not train.modelSet():
@@ -42,7 +42,7 @@ if not train.modelSet():
                        metrics=['accuracy'])
     
 
-model,history,callbacks = train.trainModel(nepochs=10, 
+model,history,callbacks = train.trainModel(nepochs=100, 
                                  batchsize=32, 
                                  stop_patience=10, 
                                  lr_factor=0.5, 
