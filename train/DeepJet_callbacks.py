@@ -91,10 +91,20 @@ class DeepJet_callbacks(object):
         self.modelbestcheck=ModelCheckpoint(outputDir+"/KERAS_check_best_model.h5", 
                                         monitor='val_loss', verbose=1, 
                                         save_best_only=True)
+
+        self.modelbestcheckweights=ModelCheckpoint(outputDir+"/KERAS_check_best_model_weights.h5", 
+                                             monitor='val_loss', verbose=1, 
+                                             save_best_only=True,save_weights_only=True)
+
         
         self.modelcheckperiod=ModelCheckpoint(outputDir+"/KERAS_check_model_epoch{epoch:02d}.h5", verbose=1,period=10)
         
         self.modelcheck=ModelCheckpoint(outputDir+"/KERAS_check_model_last.h5", verbose=1)
+
+        self.modelcheckweights=ModelCheckpoint(outputDir+"/KERAS_check_model_last_weights.h5",
+                                             monitor='val_loss', verbose=1,
+                                             save_weights_only=True)
+
         
         
   
@@ -104,7 +114,7 @@ class DeepJet_callbacks(object):
   
         self.callbacks=[
             self.nl_begin, 
-            self.modelbestcheck, self.modelcheck,self.modelcheckperiod,
+            self.modelbestcheck, self.modelbestcheckweights, self.modelcheck, self.modelcheckweights, self.modelcheckperiod,
             self.reduce_lr, self.stopping, self.nl_end, self.history,
             self.timer
         ]

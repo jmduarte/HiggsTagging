@@ -19,3 +19,12 @@ def dense_model(Inputs,nclasses,nregclasses,dropoutRate=0.25):
     predictions = Dense(nclasses, activation='softmax',kernel_initializer='lecun_uniform')(x)
     model = Model(inputs=Inputs, outputs=predictions)
     return model
+
+def linear_model(Inputs):
+    """
+    Linear model
+    """
+    #  Here add e.g. the normal dense stuff from DeepCSV
+    predictions = Dense(1, activation='linear',kernel_initializer='lecun_uniform')(Inputs)
+    model = Model(inputs=Inputs, outputs=predictions)
+    return model
