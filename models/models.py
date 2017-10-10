@@ -20,6 +20,17 @@ def dense_model(Inputs,nclasses,nregclasses,dropoutRate=0.25):
     model = Model(inputs=Inputs, outputs=predictions)
     return model
 
+def two_layer_model(Inputs):
+    """
+    One hidden layer model
+    """
+    #  Here add e.g. the normal dense stuff from DeepCSV
+    x = Dense(32, activation='relu',kernel_initializer='lecun_uniform')(Inputs)
+    #x = Dense(32, activation='linear',kernel_initializer='lecun_uniform')(Inputs)
+    predictions = Dense(1, activation='linear',kernel_initializer='lecun_uniform')(x)
+    model = Model(inputs=Inputs, outputs=predictions)
+    return model
+
 def linear_model(Inputs):
     """
     Linear model

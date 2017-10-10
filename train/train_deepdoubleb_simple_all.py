@@ -58,19 +58,19 @@ print labels_val.shape
 
 from sklearn.model_selection import train_test_split
 
-X_train_val, X_test, y_train_val, y_test = train_test_split(features_val[0][:,0,0:2], labels_val[:,1], test_size=0.2, random_state=42)
+X_train_val, X_test, y_train_val, y_test = train_test_split(features_val[0][:,0,0:10], labels_val[:,1], test_size=0.2, random_state=42)
 print X_train_val.shape
 print y_train_val.shape
 print X_test.shape
 print y_test.shape
 
 
-from models import linear_model
+from models import two_layer_model
 
 from keras.optimizers import Adam, Nadam
 from keras.layers import Input
 
-keras_model = linear_model(Input(shape=(2,)))
+keras_model = two_layer_model(Input(shape=(10,)))
 
 startlearningrate=0.0001
 adam = Adam(lr=startlearningrate)
@@ -93,10 +93,23 @@ import h5py
 h5File = h5py.File('train_deep_simple_all//KERAS_check_model_last_weights.h5')
 biases = h5File['/dense_1/dense_1/bias:0'][()]
 weights = h5File['/dense_1/dense_1/kernel:0'][()]
+biases2 = h5File['/dense_2/dense_2/bias:0'][()]
+weights2 = h5File['/dense_2/dense_2/kernel:0'][()]
 
 print "biases", biases
 print "weights", weights
+print "biases2", biases2
+print "weights2", weights2
 print "X_train_val[100:101]", X_train_val[100:101]
-print "np.dot(X_train_val[100:101],weights)+biases", np.dot(X_train_val[100:101],weights)+biases
+
+layer1_out = np.dot(X_train_val[100:101],weights)+biases
+print "np.dot(X_train_val[100:101],weights)+biases", layer1_out
+
+#relu
+for x in np.nditer(layer1_out, op_flags=['readwrite']):
+    if x<=0: 
+        x[...] = 0
+
+print "np.dot(layer1_out, weights2)+biases2", np.dot(layer1_out, weights2)+biases2
 print "prediction", keras_model.predict(X_train_val[100:101])
 print "truth", y_train_val[100:101]
