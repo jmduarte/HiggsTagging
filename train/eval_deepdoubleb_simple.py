@@ -126,16 +126,16 @@ def makeRoc(testd, model, outputDir):
     plt.legend(loc='upper left')
     plt.savefig(outputDir+"msd_passdeepdoubleb.pdf")
     
-    return df
+    return df, features_val, labels_val
 
 #os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 
-inputModel = 'train_deep_simple/KERAS_check_best_model.h5'
-outputDir = 'out_deep_simple/'
+inputModel = 'train_deep_simple_64_32_32_b1024/KERAS_check_best_model.h5'
+outputDir = 'out_deep_simple_64_32_32_b1024/'
 # test data:
-inputDataCollection = '/cms-sc17/convert_deepDoubleB_simple_test/dataCollection.dc'
+inputDataCollection = '/cms-sc17/convert_20170717_ak8_deepDoubleB_simple_test/dataCollection.dc'
 # training data:
-#inputDataCollection = '/cms-sc17/convert_deepDoubleB_simple_train_val/dataCollection.dc'
+#inputDataCollection = '/cms-sc17/convert_20170717_ak8_deepDoubleB_simple_train_val/dataCollection.dc'
 
 if os.path.isdir(outputDir):
     raise Exception('output directory must not exists yet')
@@ -153,7 +153,7 @@ from DataCollection import DataCollection
 testd=DataCollection()
 testd.readFromFile(inputDataCollection)
     
-df = makeRoc(testd, model, outputDir)
+df, X_test, y_test = makeRoc(testd, model, outputDir)
 
 
 def _byteify(data, ignore_dicts = False):
@@ -176,7 +176,7 @@ def _byteify(data, ignore_dicts = False):
 
 import json
 
-f = open('train_deep_simple/full_info.log')
+f = open('train_deep_simple_64_32_32_b1024/full_info.log')
 myListOfDicts = json.load(f, object_hook=_byteify)
 myDictOfLists = {}
 for key, val in myListOfDicts[0].iteritems():
@@ -205,3 +205,28 @@ plt.legend()
 plt.xlabel('epoch')
 plt.ylabel('accuracy')
 plt.savefig(outputDir+"acc.pdf")
+
+import h5py
+h5File = h5py.File('train_deep_simple_64_32_32_b1024/KERAS_check_best_model_weights.h5')
+biases = {}
+weights = {}
+for layer in ['fc1_relu','fc2_relu','fc3_relu','softmax']:
+    biases[layer] = h5File['/%s/%s/bias:0'%(layer,layer)][()]
+    weights[layer] = h5File['/%s/%s/kernel:0'%(layer,layer)][()]
+
+layer1_out = np.dot(X_test[0][100:101],weights['fc1_relu'])+biases['fc1_relu']
+np.maximum(layer1_out, 0, layer1_out) # relu see https://stackoverflow.com/questions/32109319/how-to-implement-the-relu-function-in-numpy
+layer2_out = np.dot(layer1_out, weights['fc2_relu'])+biases['fc2_relu']
+np.maximum(layer2_out, 0, layer2_out) # relu
+layer3_out = np.dot(layer2_out, weights['fc3_relu'])+biases['fc3_relu']
+np.maximum(layer3_out, 0, layer3_out) # relu
+softmax_out = np.dot(layer3_out, weights['softmax'])+biases['softmax']
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    # see https://stackoverflow.com/questions/34968722/softmax-function-python
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()
+softmax_out = softmax(softmax_out)
+print "manual", softmax_out
+print "prediction", model.predict([X_test[0][100:101]])
+print "truth", y_test[100:101]

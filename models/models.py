@@ -31,6 +31,13 @@ def two_layer_model(Inputs):
     model = Model(inputs=Inputs, outputs=predictions)
     return model
 
+def three_layer_model(Inputs,nclasses,nregclasses,dropoutRate=0.1):
+    x = Flatten()(Inputs[0])
+    X = Dense(64, activation='relu',kernel_initializer='lecun_uniform',name='fc1')(x)
+    x = Dense(32, activation='relu',kernel_initializer='lecun_uniform',name='fc2')(x)
+    x = Dense(32, activation='relu',kernel_initializer='lecun_uniform',name='fc3')(x)
+    output = Dense(nclasses, activation='softmax', name='softmax', kernel_initializer='lecun_uniform')(x)
+
 def linear_model(Inputs):
     """
     Linear model
